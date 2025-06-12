@@ -1,0 +1,21 @@
+# Ignoruj katalogi tymczasowe Vivado
+*.jou
+*.log
+*.str
+*.str~
+*.xml
+*.html
+
+.cache/
+.hw/
+.sim/
+.ip_user_files/
+.webtalk/
+.xpr.cache/
+.project/
+.runs/
+.xgui/
+
+# Systemowe
+.DS_Store
+Thumbs.db
