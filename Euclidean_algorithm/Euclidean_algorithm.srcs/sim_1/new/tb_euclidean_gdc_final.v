@@ -72,8 +72,9 @@ module tb_euclidean_gcd_final;
 
         rst = 1;
         start = 0;
-        #20;
+        #200;
         rst = 0;
+        #20
 
         for (i = 0; i < 100; i = i + 1) begin
             // Generate random 14-bit numbers (max 9999)
