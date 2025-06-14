@@ -1,41 +1,29 @@
-`timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 14.06.2025 16:25:26
-// Design Name: 
-// Module Name: modulo_u
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-module modulo_u (
-    input  wire        clk,
-    input  wire        rst,
-    input  wire        start,
-    input  wire [13:0] dividend,
-    input  wire [13:0] divisor,
-    output reg         done,
-    output reg [13:0]  remainder
+// =============================================================
+//  modulo_unit  - remainder = dividend % divisor
+//  param WIDTH : szerokoœæ s³ów (domyœlnie 64 b)
+//  • start  - impuls 1 cykl
+//  • done   - impuls 1 cykl, gdy remainder gotowe
+//  • iteracyjny algorytm "shift & subtract" - WIDTH cykli
+// =============================================================
+module modulo_u #(parameter WIDTH = 64)
+(
+    input  wire                clk,
+    input  wire                rst,
+    input  wire                start,
+    input  wire [WIDTH-1:0]    dividend,
+    input  wire [WIDTH-1:0]    divisor,
+    output reg                 done,
+    output reg  [WIDTH-1:0]    remainder
 );
 
-    /* ----------   deklaracje   ---------- */
-    reg        busy;
-    reg [14:0] rem;          // 15-bitowa reszta
-    reg [13:0] dvsr;         // dzielnik
-    reg [13:0] dvd;          // dzielna
-    reg [3:0]  cnt;          // licznik 14?0
-    reg [14:0] trial;        // ? PRZENIESIONA deklaracja
+    /* ---------- rejestry wewn. ---------- */
+    reg                    busy;
+    reg [WIDTH   :0]       rem;      // +1 bit
+    reg [WIDTH-1:0]        dvsr;
+    reg [WIDTH-1:0]        dvd;
+    reg [$clog2(WIDTH):0]  cnt;
+    reg [WIDTH   :0]       trial;
 
-    /* ----------   logika sekwencyjna   ---------- */
     always @(posedge clk or posedge rst) begin
         if (rst) begin
             busy      <= 0;
@@ -45,42 +33,35 @@ module modulo_u (
             dvd       <= 0;
             cnt       <= 0;
             remainder <= 0;
-        end
-        else begin
-            done <= 0;
+        end else begin
+            done <= 0;                                // impuls
 
-            /* ---- START ---- */
+            /* ----------- START ----------- */
             if (start && !busy) begin
-                if (divisor == 0) begin
+                if (divisor == 0) begin               // zabezp.
                     remainder <= 0;
                     done      <= 1;
                 end else begin
                     busy <= 1;
-                    cnt  <= 4'd14;
+                    cnt  <= WIDTH;                    // dok³adnie WIDTH kroków
                     rem  <= 0;
                     dvd  <= dividend;
                     dvsr <= divisor;
                 end
             end
-            /* ---- RUNDY DZIELENIA ---- */
+            /* ------- OBLICZENIA ---------- */
             else if (busy) begin
-                /* 1) budujemy kandydat trial */
-                trial = {rem[13:0], dvd[13]};
+                trial = {rem[WIDTH-1:0] , dvd[WIDTH-1]};
 
-                /* 2) nowa reszta */
                 if (trial >= dvsr)
                     rem <= trial - dvsr;
                 else
                     rem <= trial;
 
-                /* 3) shift dzielnej */
-                dvd <= {dvd[12:0], 1'b0};
-
-                /* 4) licznik */
+                dvd <= {dvd[WIDTH-2:0] , 1'b0};       // shift w lewo
                 cnt <= cnt - 1'b1;
 
-                /* 5) koniec */
-                if (cnt == 4'd1) begin
+                if (cnt == 1) begin                   // ostatni krok
                     remainder <= (trial >= dvsr) ? (trial - dvsr) : trial;
                     busy      <= 0;
                     done      <= 1;
