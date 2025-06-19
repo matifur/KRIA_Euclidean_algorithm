@@ -1,6 +1,7 @@
 # KRIA_Euclidean_algorithm
 
-This repository contains Vivado 2022.1 project with implementation of Euclidean algorithm and jupyter notebook with Python implementation of the algoritm. 
+This repository contains Vivado 2022.1 project with implementation of Euclidean algorithm and jupyter notebook with Python implementation of the algoritm. Code is written to work on Kria KV260 Vision AI Starter Kit.
+
 ## Szybka mapa repozytorium
 
 | element                              | krótki opis (1-zdaniowy)                              |
