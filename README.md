@@ -11,3 +11,4 @@ This repository contains Vivado 2022.1 project with implementation of Euclidean 
 | **Euclidean_alg_v1_wrapper.xsa**     | eksport sprzętu (bitstream + HWH) do PYNQ/Kria        |
 | **Euclidean_algorithm.ipynb**        | notatnik Jupyter: patch, testy, benchmark             |
 | **Euclidean_algorithm.pdf**          | Dokumentacja stworzona z notatkinia Jupyter           |
+| **Euclidean_algorithm_strony.pdf**          | Dokumentacja stworzona z notatkinia Jupyter z podziałem na strony           |
